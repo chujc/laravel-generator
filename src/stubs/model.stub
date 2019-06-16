@@ -1,0 +1,32 @@
+<?php
+/**
+ * Class DummyClass
+ * @package {{namespace}}
+ * @date {{date}}
+ */
+
+namespace {{namespace}};
+
+use {{extends}};
+{{useSoftDeletes}}
+
+class DummyClass extends {{shortNameExtends}}
+{
+    {{softDeletes}}
+
+    {{table}}
+
+    {{primaryKey}}
+
+    {{keyType}}
+
+    {{incrementing}}
+
+    {{timestamps}}
+
+    {{created_at}}
+
+    {{updated_at}}
+
+    {{fillable}}
+}

@@ -1,0 +1,28 @@
+{
+    "name": "chujc/laravel-generator",
+    "description": "Laravel, Lumen脚手架 按规则自动生成model文件以及controller，request文件",
+    "keywords": ["generator", "lumen", "laravel", "API", "model", "controller"],
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "john_chu",
+            "email": "john1668@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ChuJC\\LaravelGenerator\\GeneratorServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "ChuJC\\LaravelGenerator\\": "src/"
+        }
+    }
+}

@@ -1,0 +1,71 @@
+<?php
+
+namespace {{namespace}};
+
+use {{useModelNamespace}};
+use {{useRequestNamespace}};
+use {{extends}};
+
+class {{className}} extends {{extendsName}}
+{
+    /**
+     * Display a listing of the resource.
+     *
+     */
+    public function index()
+    {
+         return {{upperModelName}}::all();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \{{useRequestNamespace}}  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store({{requestName}} $request)
+    {
+        ${{modelName}} = {{upperModelName}}::create($request->all());
+
+        return ${{modelName}};
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \{{useModelNamespace}} ${{modelName}}
+     * @return ${{modelName}}
+     */
+    public function show({{upperModelName}} ${{modelName}})
+    {
+        return ${{modelName}};
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \{{useRequestNamespace}}  $request
+     * @param  \{{useModelNamespace}}  ${{modelName}}
+     * @return ${{modelName}}
+     */
+    public function update({{requestName}} $request, {{upperModelName}} ${{modelName}})
+    {
+         ${{modelName}}->update($request->all());
+
+        return ${{modelName}};
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \{{useModelNamespace}} ${{modelName}}
+     * @return string
+     * @throws \Exception
+     */
+    public function destroy({{upperModelName}} ${{modelName}})
+    {
+        ${{modelName}}->delete();
+
+        return '';
+    }
+}
