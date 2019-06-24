@@ -112,7 +112,7 @@ class MakeAPICommand extends GeneratorCommand
 
         $this->files->put($controllerFileName, $controllerClassFile);
 
-        $this->info($name . ' created successfully.');
+        $this->info($name . ' controller created successfully.');
 
         $this->buildRoute($name);
 

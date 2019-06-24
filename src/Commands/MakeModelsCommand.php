@@ -89,14 +89,14 @@ class MakeModelsCommand extends GeneratorCommand
             if ($array) {
                 if ($this->files->exists($path . '/' . $array['class'] . '.php')) {
                     if (!$this->confirm("models {$array['class']} 已经存在, 请确认是否覆盖? [y|N]")) {
-                        $this->warn($array['class'] . ' created defeated.');
+                        $this->warn($array['class'] . ' model created defeated.');
                         return;
                     }
                 }
 
                 $this->files->put($path . '/' . $array['class'] . '.php', $array['file']);
 
-                $this->info($array['class'] . ' created successfully.');
+                $this->info($array['class'] . ' model created successfully.');
 
                 if (array_key_exists('Doctrine\DBAL\\', $packages) && array_key_exists('Barryvdh\LaravelIdeHelper\\', $packages)) {
                     $this->call("ide-helper:models", [
