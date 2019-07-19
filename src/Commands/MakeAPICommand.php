@@ -61,45 +61,39 @@ class MakeAPICommand extends GeneratorCommand
             }
         }
 
-        if ($this->option("model")) {
+        if ($this->checkModelExists()) {
 
-            $modelFile = config('generator.model.path'). '/'. Str::studly($this->option('model')). '.php';
+            $controllerClassFile = $this->buildClassFile('model');
 
-            if ($this->files->exists($modelFile)) {
+            $controllerClassFile = $this->replaceModel($controllerClassFile, Str::studly($this->option('model')));
 
-                $controllerClassFile = $this->buildClassFile('model');
+            $useRequestNamespace = 'Illuminate\Http\Request';
+            $requestName = 'Request';
 
-                $controllerClassFile = $this->replaceModel($controllerClassFile, Str::studly($this->option('model')));
+            if ($this->generator['request']) {
 
-                $useRequestNamespace = 'Illuminate\Http\Request';
-                $requestName = 'Request';
+                $this->checkDirAndMakeDir($this->generator['request_path']);
 
-                if ($this->generator['request']) {
+                $requestFile = $this->buildClassFile('request');
 
-                    $this->checkDirAndMakeDir($this->generator['request_path']);
+                $requestFile = str_replace('{{requestNamespace}}', $this->generator['request_namespace'], $requestFile);
+                $requestFile = str_replace('{{requestClassName}}', Str::studly($this->option('model')). 'Request', $requestFile);
 
-                    $requestFile = $this->buildClassFile('request');
+                $fileName = $this->generator['request_path'] . '/' . Str::studly($this->option('model')). 'Request.php';
+                $this->files->put($fileName, $requestFile);
 
-                    $requestFile = str_replace('{{requestNamespace}}', $this->generator['request_namespace'], $requestFile);
-                    $requestFile = str_replace('{{requestClassName}}', Str::studly($this->option('model')). 'Request', $requestFile);
-
-                    $fileName = $this->generator['request_path'] . '/' . Str::studly($this->option('model')). 'Request.php';
-                    $this->files->put($fileName, $requestFile);
-
-                    $useRequestNamespace = $this->generator['request_namespace']. '\\'. Str::studly($this->option('model')). 'Request';
-                    $requestName = Str::studly($this->option('model')). 'Request';
-                }
-
-                $controllerClassFile = str_replace('{{useRequestNamespace}}', $useRequestNamespace, $controllerClassFile);
-                $controllerClassFile = str_replace('{{requestName}}', $requestName, $controllerClassFile);
-
-            } else {
-                $this->warn('未找到对应的model文件'. $modelFile);
-
-                $controllerClassFile = $this->buildClassFile();
+                $useRequestNamespace = $this->generator['request_namespace']. '\\'. Str::studly($this->option('model')). 'Request';
+                $requestName = Str::studly($this->option('model')). 'Request';
             }
-        } else {
 
+            $controllerClassFile = str_replace('{{useRequestNamespace}}', $useRequestNamespace, $controllerClassFile);
+            $controllerClassFile = str_replace('{{requestName}}', $requestName, $controllerClassFile);
+
+        } else {
+            if ($this->option("model")) {
+                $modelPath = config('generator.model.path');
+                $this->warn("未在{$modelPath}找到对应的model文件");
+            }
             $controllerClassFile = $this->buildClassFile();
         }
 
@@ -112,7 +106,7 @@ class MakeAPICommand extends GeneratorCommand
 
         $this->files->put($controllerFileName, $controllerClassFile);
 
-        $this->info($name . ' controller created successfully.');
+        $this->info($name . ' created successfully.');
 
         $this->buildRoute($name);
 
@@ -145,18 +139,18 @@ class MakeAPICommand extends GeneratorCommand
 
         $url = $this->removeControllerString($controller);
 
-        $filePath = $this->relativePath($this->generator['path']. '/' . $this->getNamespace($name). '/'. $this->getClassName($name));
+        $filePath = $this->relativePath($this->generator['path']. '/' . $this->getNamespace($name). $this->getClassName($name));
 
         $this->files->append($this->generator['route'], "// {$filePath}" . PHP_EOL);
 
-        if ($this->lumenOrLaravel() == 'laravel') {
-            $this->files->append($this->generator['route'], "Route::apiResource('{$url}', '{$controller}');" . PHP_EOL . PHP_EOL);
-            $this->info($name . ' route created successfully.');
-            return;
-        }
+//        if ($this->lumenOrLaravel() == 'laravel') {
+//            $this->files->append($this->generator['route'], "Route::apiResource('{$url}', '{$controller}');" . PHP_EOL );
+//            $this->info($name . ' route created successfully.');
+//            return;
+//        }
 
         $id = 'id';
-        if ($this->option("model")) {
+        if ($this->checkModelExists()) {
             $id = lcfirst($this->getClassName(Str::studly($this->option('model'))));
         }
 
@@ -189,6 +183,25 @@ class MakeAPICommand extends GeneratorCommand
     protected function removeControllerString($name)
     {
         return  strtolower(str_replace('Controller', '', $name));
+    }
+
+    /**
+     * 判断model是否存在
+     * @date 2019-06-12
+     * @author john_chu <john1668@qq.com>
+     */
+    protected function checkModelExists()
+    {
+        if ($this->option("model")) {
+
+            $modelFile = config('generator.model.path'). '/'. Str::studly($this->option('model')). '.php';
+
+            if ($this->files->exists($modelFile)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

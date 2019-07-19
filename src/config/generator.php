@@ -11,7 +11,7 @@ return [
         'extends' => 'Illuminate\Database\Eloquent\Model',
         'extends_name' => 'Model',
         // 忽略的table, 不会生成models
-        'ignore' => ['migrations'],
+        'ignore' => ['users', 'migrations'],
         // 满足条件的table 不为空数组的时候 只会为填充的table生成model
         // 简单点说为多个指定的table生成model就填写在fill配置中
         'fill' => [],

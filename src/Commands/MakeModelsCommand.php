@@ -80,7 +80,11 @@ class MakeModelsCommand extends GeneratorCommand
             });
         }
 
-        $path = $this->makeDirectory($this->generator['path']);
+        $path = $this->generator['path'];
+
+        if (!$this->files->exists($path)) {
+            @mkdir($path, 0777, true);
+        }
 
         $packages = require_once base_path('vendor/composer/autoload_psr4.php');
 
@@ -89,14 +93,14 @@ class MakeModelsCommand extends GeneratorCommand
             if ($array) {
                 if ($this->files->exists($path . '/' . $array['class'] . '.php')) {
                     if (!$this->confirm("models {$array['class']} 已经存在, 请确认是否覆盖? [y|N]")) {
-                        $this->warn($array['class'] . ' model created defeated.');
+                        $this->warn($array['class'] . ' created defeated.');
                         return;
                     }
                 }
 
                 $this->files->put($path . '/' . $array['class'] . '.php', $array['file']);
 
-                $this->info($array['class'] . ' model created successfully.');
+                $this->info($array['class'] . ' created successfully.');
 
                 if (array_key_exists('Doctrine\DBAL\\', $packages) && array_key_exists('Barryvdh\LaravelIdeHelper\\', $packages)) {
                     $this->call("ide-helper:models", [
@@ -152,7 +156,7 @@ class MakeModelsCommand extends GeneratorCommand
 
                 $primaryKey = $columnsCollection->where('name', $primaryKey[0])->first();
 
-                $properties['primaryKeyType'] =$primaryKey['type'];
+                $properties['primaryKeyType'] = $primaryKey['type'];
 
                 $columnsCollection = $columnsCollection->whereNotIn('name', [$primaryKey['name']]);
 
@@ -201,7 +205,7 @@ class MakeModelsCommand extends GeneratorCommand
             $classFile = str_replace('{{keyType}}', '', $classFile);
             $classFile = str_replace('{{incrementing}}', '', $classFile);
         } else {
-            if (stripos('int', $properties['primaryKeyType']) !== false) {
+            if (stripos($properties['primaryKeyType'], 'int') !== false) {
                 $classFile = str_replace('{{keyType}}', '', $classFile);
 
                 if ($properties['primaryKey'] == 'id') {

@@ -2,6 +2,7 @@
 
 namespace {{namespace}};
 
+use Illuminate\Http\Request;
 use {{useModelNamespace}};
 use {{useRequestNamespace}};
 use {{extends}};
@@ -12,7 +13,7 @@ class {{className}} extends {{extendsName}}
      * Display a listing of the resource.
      *
      */
-    public function index()
+    public function index(Request $request)
     {
          return {{upperModelName}}::all();
     }
